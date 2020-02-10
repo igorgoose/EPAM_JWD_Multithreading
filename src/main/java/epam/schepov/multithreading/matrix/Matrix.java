@@ -30,5 +30,11 @@ public enum Matrix {
         matrix[row][column] = value;
     }
 
+    public int getRowsNumber(){
+        return matrix.length;
+    }
 
+    public int getColumnsNumber(){
+        return matrix.length > 0 ? matrix[0].length : 0;
+    }
 }
