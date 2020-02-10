@@ -1,6 +1,6 @@
 package epam.schepov.multithreading.shell.lock;
 
-import epam.schepov.multithreading.exception.OutOfBoundsMatrixShellException;
+import epam.schepov.multithreading.exception.shell.OutOfBoundsMatrixShellException;
 import epam.schepov.multithreading.exception.matrix.OutOfBoundsMatrixException;
 import epam.schepov.multithreading.matrix.Matrix;
 import epam.schepov.multithreading.shell.ConcurrentMatrixShell;
@@ -40,5 +40,15 @@ public class LockMatrixShell extends ConcurrentMatrixShell {
         } finally {
             currentLock.unlock();
         }
+    }
+
+    @Override
+    public int getRowsNumber() {
+        return matrix.getRowsNumber();
+    }
+
+    @Override
+    public int getColumnsNumber() {
+        return matrix.getColumnsNumber();
     }
 }
