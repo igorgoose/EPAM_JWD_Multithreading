@@ -1,16 +1,17 @@
 package epam.schepov.multithreading.matrix;
 
 import epam.schepov.multithreading.exception.matrix.OutOfBoundsMatrixException;
-import epam.schepov.multithreading.validator.MatrixBoundsValidator;
+import epam.schepov.multithreading.validator.SquareMatrixValidator;
 
-public enum Matrix {
+
+public enum SquareMatrix {
     INSTANCE;
 
     private static final int MATRIX_SIZE = 10;
 
     int [][] matrix;
 
-    private Matrix(){
+    private SquareMatrix(){
         matrix = new int[MATRIX_SIZE][MATRIX_SIZE];
     }
 
@@ -19,14 +20,14 @@ public enum Matrix {
     }
 
     public int getItem(int row, int column) throws OutOfBoundsMatrixException {
-        MatrixBoundsValidator.validateIndex(row);
-        MatrixBoundsValidator.validateIndex(column);
+        SquareMatrixValidator.validateIndex(row);
+        SquareMatrixValidator.validateIndex(column);
         return matrix[row][column];
     }
 
     public void setItem(int row, int column, int value) throws OutOfBoundsMatrixException {
-        MatrixBoundsValidator.validateIndex(row);
-        MatrixBoundsValidator.validateIndex(column);
+        SquareMatrixValidator.validateIndex(row);
+        SquareMatrixValidator.validateIndex(column);
         matrix[row][column] = value;
     }
 
