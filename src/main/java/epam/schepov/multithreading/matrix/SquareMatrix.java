@@ -4,19 +4,16 @@ import epam.schepov.multithreading.exception.matrix.OutOfBoundsMatrixException;
 import epam.schepov.multithreading.validator.SquareMatrixValidator;
 
 
-public enum SquareMatrix {
-    INSTANCE;
+public class SquareMatrix {
 
-    private static final int MATRIX_SIZE = 10;
+    private int [][] matrix;
 
-    int [][] matrix;
-
-    private SquareMatrix(){
-        matrix = new int[MATRIX_SIZE][MATRIX_SIZE];
+    public SquareMatrix(int[][] matrix){
+        this.matrix = matrix;
     }
 
-    public static int getMatrixSize() {
-        return MATRIX_SIZE;
+    public int getMatrixSize() {
+        return matrix.length;
     }
 
     public int getItem(int row, int column) throws OutOfBoundsMatrixException {
