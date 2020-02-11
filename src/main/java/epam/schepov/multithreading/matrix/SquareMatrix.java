@@ -8,6 +8,12 @@ public class SquareMatrix {
 
     private int [][] matrix;
 
+    public static final int ZERO_SIZE = 0;
+
+    public SquareMatrix(){
+      matrix = new int[ZERO_SIZE][ZERO_SIZE];
+    }
+
     public SquareMatrix(int[][] matrix){
         this.matrix = matrix;
     }
