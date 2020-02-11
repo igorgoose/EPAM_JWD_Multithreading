@@ -2,19 +2,29 @@ package epam.schepov.multithreading.shell.lock;
 
 import epam.schepov.multithreading.exception.shell.OutOfBoundsMatrixShellException;
 import epam.schepov.multithreading.exception.matrix.OutOfBoundsMatrixException;
-import epam.schepov.multithreading.matrix.SquareMatrix;
 import epam.schepov.multithreading.shell.ConcurrentMatrixShell;
 
 import java.util.concurrent.locks.ReentrantLock;
 
 public class LockOnlyMatrixShell extends ConcurrentMatrixShell {
 
-    ReentrantLock[][] lockMatrix;
+
+    private ReentrantLock[][] lockMatrix;
 
 
-    public LockOnlyMatrixShell(SquareMatrix squareMatrix) {
-        super(squareMatrix);
-        lockMatrix = new ReentrantLock[squareMatrix.getRowsNumber()][squareMatrix.getColumnsNumber()];
+    private  LockOnlyMatrixShell(){
+        lockMatrix = new ReentrantLock[0][0];
+    }
+
+
+
+    private static class InstanceHolder{
+        private static LockOnlyMatrixShell INSTANCE = new LockOnlyMatrixShell();
+    }
+
+
+    public static LockOnlyMatrixShell getInstance(){
+        return InstanceHolder.INSTANCE;
     }
 
     @Override
@@ -52,4 +62,6 @@ public class LockOnlyMatrixShell extends ConcurrentMatrixShell {
     public int getColumnsNumber() {
         return squareMatrix.getColumnsNumber();
     }
+
+
 }
