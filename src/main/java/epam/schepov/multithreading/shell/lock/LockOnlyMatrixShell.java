@@ -2,18 +2,19 @@ package epam.schepov.multithreading.shell.lock;
 
 import epam.schepov.multithreading.exception.shell.OutOfBoundsMatrixShellException;
 import epam.schepov.multithreading.exception.matrix.OutOfBoundsMatrixException;
-import epam.schepov.multithreading.matrix.Matrix;
+import epam.schepov.multithreading.matrix.SquareMatrix;
 import epam.schepov.multithreading.shell.ConcurrentMatrixShell;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-public class LockMatrixShell extends ConcurrentMatrixShell {
+public class LockOnlyMatrixShell extends ConcurrentMatrixShell {
 
     ReentrantLock[][] lockMatrix;
 
-    public LockMatrixShell(Matrix matrix) {
-        super(matrix);
-        lockMatrix = new ReentrantLock[matrix.getRowsNumber()][matrix.getColumnsNumber()];
+
+    public LockOnlyMatrixShell(SquareMatrix squareMatrix) {
+        super(squareMatrix);
+        lockMatrix = new ReentrantLock[squareMatrix.getRowsNumber()][squareMatrix.getColumnsNumber()];
     }
 
     @Override
@@ -21,7 +22,7 @@ public class LockMatrixShell extends ConcurrentMatrixShell {
         ReentrantLock currentLock = lockMatrix[row][column];
         try {
             currentLock.lock();
-            matrix.setItem(row, column, value);
+            squareMatrix.setItem(row, column, value);
         } catch (OutOfBoundsMatrixException e) {
             throw new OutOfBoundsMatrixShellException(e);
         } finally {
@@ -34,7 +35,7 @@ public class LockMatrixShell extends ConcurrentMatrixShell {
         ReentrantLock currentLock = lockMatrix[row][column];
         try {
             currentLock.lock();
-            return matrix.getItem(row, column);
+            return squareMatrix.getItem(row, column);
         } catch (OutOfBoundsMatrixException e) {
             throw new OutOfBoundsMatrixShellException(e);
         } finally {
@@ -44,11 +45,11 @@ public class LockMatrixShell extends ConcurrentMatrixShell {
 
     @Override
     public int getRowsNumber() {
-        return matrix.getRowsNumber();
+        return squareMatrix.getRowsNumber();
     }
 
     @Override
     public int getColumnsNumber() {
-        return matrix.getColumnsNumber();
+        return squareMatrix.getColumnsNumber();
     }
 }

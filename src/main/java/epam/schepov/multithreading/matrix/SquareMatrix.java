@@ -1,32 +1,30 @@
 package epam.schepov.multithreading.matrix;
 
 import epam.schepov.multithreading.exception.matrix.OutOfBoundsMatrixException;
-import epam.schepov.multithreading.validator.MatrixBoundsValidator;
+import epam.schepov.multithreading.validator.SquareMatrixValidator;
 
-public enum Matrix {
-    INSTANCE;
 
-    private static final int MATRIX_SIZE = 10;
+public class SquareMatrix {
 
-    int [][] matrix;
+    private int [][] matrix;
 
-    private Matrix(){
-        matrix = new int[MATRIX_SIZE][MATRIX_SIZE];
+    public SquareMatrix(int[][] matrix){
+        this.matrix = matrix;
     }
 
-    public static int getMatrixSize() {
-        return MATRIX_SIZE;
+    public int getMatrixSize() {
+        return matrix.length;
     }
 
     public int getItem(int row, int column) throws OutOfBoundsMatrixException {
-        MatrixBoundsValidator.validateIndex(row);
-        MatrixBoundsValidator.validateIndex(column);
+        SquareMatrixValidator.validateIndex(row);
+        SquareMatrixValidator.validateIndex(column);
         return matrix[row][column];
     }
 
     public void setItem(int row, int column, int value) throws OutOfBoundsMatrixException {
-        MatrixBoundsValidator.validateIndex(row);
-        MatrixBoundsValidator.validateIndex(column);
+        SquareMatrixValidator.validateIndex(row);
+        SquareMatrixValidator.validateIndex(column);
         matrix[row][column] = value;
     }
 
