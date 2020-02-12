@@ -13,7 +13,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class LockBarrierSquareMatrixShell extends ConcurrentSquareMatrixShell {
 
     private ReentrantLock[][] lockMatrix;
-    private boolean[][] usedCells;
     private ReentrantLock matrixLock;
     private CyclicBarrier cyclicBarrier;
     private static final int DEFAULT_SLEEP_TIME = 10;
@@ -21,7 +20,6 @@ public class LockBarrierSquareMatrixShell extends ConcurrentSquareMatrixShell {
     private LockBarrierSquareMatrixShell() {
         int size = squareMatrix.getMatrixSize();
         lockMatrix = new ReentrantLock[size][size];
-        usedCells = new boolean[size][size];
         cyclicBarrier = new CyclicBarrier(size);
         matrixLock = new ReentrantLock();
     }
@@ -38,7 +36,7 @@ public class LockBarrierSquareMatrixShell extends ConcurrentSquareMatrixShell {
     public void setItem(int row, int column, int value) throws OutOfBoundsMatrixShellException, AccessNotGrantedException {
         ReentrantLock currentLock = lockMatrix[row][column];
         try {
-            if (currentLock.tryLock() && !usedCells[row][column]) {
+            if (currentLock.tryLock()) {
                 Thread.sleep(DEFAULT_SLEEP_TIME);
                 squareMatrix.setItem(row, column, value);
             } else {
