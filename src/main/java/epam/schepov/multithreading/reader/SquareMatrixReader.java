@@ -10,7 +10,6 @@ import epam.schepov.multithreading.reader.result.SquareMatrixReaderResult;
 import epam.schepov.multithreading.validator.ReaderValidator;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -20,6 +19,7 @@ public class SquareMatrixReader {
   private static final String DELIMITER = " ";
   private static final int MATRIX_SIZE_INDEX = 0;
   private static final int THREADS_NUMBER_INDEX = 1;
+
 
   private File file;
 
@@ -44,6 +44,7 @@ public class SquareMatrixReader {
       ReaderValidator.validateThreadMatrixMetaData(parameters);
       int matrixSize = Integer.parseInt(parameters[MATRIX_SIZE_INDEX]);
       int threadsNumber = Integer.parseInt(parameters[THREADS_NUMBER_INDEX]);
+      ReaderValidator.validateMatrixSizeAndThreadsNumber(matrixSize, threadsNumber);
       int[][] matrix = new int[matrixSize][matrixSize];
       for (int i = 0; i < matrixSize; i++) {
         data = reader.readLine();

@@ -8,10 +8,10 @@ public class SquareMatrix {
 
     private int [][] matrix;
 
-    public static final int ZERO_SIZE = 0;
+    private static final int DEFAULT_SIZE = 1;
 
     public SquareMatrix(){
-      matrix = new int[ZERO_SIZE][ZERO_SIZE];
+      matrix = new int[DEFAULT_SIZE][DEFAULT_SIZE];
     }
 
     public SquareMatrix(int[][] matrix){
