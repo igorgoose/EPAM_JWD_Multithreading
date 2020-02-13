@@ -27,7 +27,7 @@ public abstract class ConcurrentSquareMatrixShell {
         return squareMatrix;
     }
 
-    public abstract void setItem(int row, int column, int value) throws OutOfBoundsMatrixException, OutOfBoundsMatrixShellException, AccessNotGrantedException;
+    public abstract boolean setItem(int row, int column, int value) throws OutOfBoundsMatrixException, OutOfBoundsMatrixShellException, AccessNotGrantedException;
 
     public abstract int getItem(int row, int column) throws OutOfBoundsMatrixShellException, AccessNotGrantedException;
 

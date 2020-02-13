@@ -14,18 +14,31 @@ public class LockBarrierSquareMatrixShell extends ConcurrentSquareMatrixShell {
 
     private ReentrantLock[][] lockMatrix;
     private ReentrantLock matrixLock;
+    private static boolean[][] usedCells;
     private CyclicBarrier cyclicBarrier;
     private static final int DEFAULT_SLEEP_TIME = 10;
 
     private LockBarrierSquareMatrixShell() {
         int size = squareMatrix.getMatrixSize();
         lockMatrix = new ReentrantLock[size][size];
+        usedCells = new boolean[size][size];
         cyclicBarrier = new CyclicBarrier(size);
         matrixLock = new ReentrantLock();
+        initializeArrays();
     }
 
     private static class InstanceHolder {
         private static LockBarrierSquareMatrixShell INSTANCE = new LockBarrierSquareMatrixShell();
+    }
+
+    private void initializeArrays() {
+        int size = lockMatrix.length;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                lockMatrix[i][j] = new ReentrantLock();
+                usedCells[i][j] = false;
+            }
+        }
     }
 
     public static LockBarrierSquareMatrixShell getInstance() {
@@ -33,14 +46,15 @@ public class LockBarrierSquareMatrixShell extends ConcurrentSquareMatrixShell {
     }
 
     @Override
-    public void setItem(int row, int column, int value) throws OutOfBoundsMatrixShellException, AccessNotGrantedException {
+    public boolean setItem(int row, int column, int value) throws OutOfBoundsMatrixShellException {
         ReentrantLock currentLock = lockMatrix[row][column];
         try {
-            if (currentLock.tryLock()) {
+            currentLock.lock();
+            matrixLock.lock();
+            if (usedCells[row][column]) {
                 Thread.sleep(DEFAULT_SLEEP_TIME);
                 squareMatrix.setItem(row, column, value);
-            } else {
-                throw new AccessNotGrantedException("Access to the resource not granted!");
+                return true;
             }
         } catch (OutOfBoundsMatrixException e) {
             throw new OutOfBoundsMatrixShellException(e);
@@ -48,22 +62,24 @@ public class LockBarrierSquareMatrixShell extends ConcurrentSquareMatrixShell {
             e.printStackTrace();//todo
         } finally {
             currentLock.unlock();
+            matrixLock.unlock();
         }
+        return false;
     }
 
     @Override
-    public int getItem(int row, int column) throws OutOfBoundsMatrixShellException, AccessNotGrantedException {
+    public int getItem(int row, int column) throws OutOfBoundsMatrixShellException{
         ReentrantLock currentLock = lockMatrix[row][column];
         try {
-            if (currentLock.tryLock()) {
-                return squareMatrix.getItem(row, column);
-            }
+            currentLock.lock();
+            matrixLock.lock();
+            return squareMatrix.getItem(row, column);
         } catch (OutOfBoundsMatrixException e) {
             throw new OutOfBoundsMatrixShellException(e);
         } finally {
             currentLock.unlock();
+            matrixLock.unlock();
         }
-        throw new AccessNotGrantedException("Access to the resource not granted!");
     }
 
     @Override
@@ -77,13 +93,15 @@ public class LockBarrierSquareMatrixShell extends ConcurrentSquareMatrixShell {
 
     @Override
     public void setSquareMatrix(SquareMatrix squareMatrix) throws NullSquareMatrixPassed, AccessNotGrantedException {
-        if(matrixLock.tryLock()) {
+        try {
+            matrixLock.lock();
             super.setSquareMatrix(squareMatrix);
             int size = squareMatrix.getMatrixSize();
             lockMatrix = new ReentrantLock[size][size];
             cyclicBarrier = new CyclicBarrier(size);
-        } else{
-            throw new AccessNotGrantedException("Access to square matrix not granted!");
+            initializeArrays();
+        } finally {
+            matrixLock.unlock();
         }
     }
 
