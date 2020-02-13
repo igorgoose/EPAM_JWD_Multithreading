@@ -1,9 +1,12 @@
 package epam.schepov.multithreading.thread;
 
+import com.sun.deploy.util.StringUtils;
 import epam.schepov.multithreading.exception.AccessNotGrantedException;
 import epam.schepov.multithreading.exception.NotInitializedException;
+import epam.schepov.multithreading.exception.WriterCreationException;
 import epam.schepov.multithreading.exception.shell.OutOfBoundsMatrixShellException;
 import epam.schepov.multithreading.shell.lock.LockBarrierSquareMatrixShell;
+import epam.schepov.multithreading.writer.ConcurrentWriter;
 
 import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
@@ -11,6 +14,7 @@ import java.util.concurrent.CyclicBarrier;
 
 public class MatrixRunnable implements Runnable {
 
+    private ConcurrentWriter writer = ConcurrentWriter.getInstance();
     private LockBarrierSquareMatrixShell matrixShell;
     private static int id_count = 0;
     private int id;
@@ -44,7 +48,8 @@ public class MatrixRunnable implements Runnable {
             barrier.await();
 
             int sum = countSums(diagonalIndex);
-
+            String info = "Thread: " + id + "; sum: " + sum + "\n";
+            writer.write(info);
 
         } catch (OutOfBoundsMatrixShellException e) {
             e.printStackTrace();//todo
@@ -53,6 +58,10 @@ public class MatrixRunnable implements Runnable {
         } catch (BrokenBarrierException e) {
             e.printStackTrace();
         } catch (NotInitializedException e) {
+            e.printStackTrace();
+        } catch (AccessNotGrantedException e) {
+            e.printStackTrace();
+        } catch (WriterCreationException e) {
             e.printStackTrace();
         }
     }
@@ -70,7 +79,7 @@ public class MatrixRunnable implements Runnable {
         return new Random().nextBoolean();
     }
 
-    private int countSums(int diagonalIndex) throws NotInitializedException, OutOfBoundsMatrixShellException {
+    private int countSums(int diagonalIndex) throws NotInitializedException, OutOfBoundsMatrixShellException, AccessNotGrantedException {
         if (matrixShell == null) {
             throw new NotInitializedException();
         }

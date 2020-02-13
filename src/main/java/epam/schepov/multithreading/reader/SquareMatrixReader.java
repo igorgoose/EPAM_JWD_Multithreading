@@ -18,7 +18,7 @@ public class SquareMatrixReader {
   private static final String DEFAULT_FILE_NAME = "matrix_data.txt";
   private static final String DELIMITER = " ";
   private static final int MATRIX_SIZE_INDEX = 0;
-  private static final int THREADS_NUMBER_INDEX = 1;
+  private static final int ITERATIONS_NUMBER_INDEX = 1;
 
 
   private File file;
@@ -43,8 +43,8 @@ public class SquareMatrixReader {
       String[] parameters = data.split(DELIMITER);
       ReaderValidator.validateThreadMatrixMetaData(parameters);
       int matrixSize = Integer.parseInt(parameters[MATRIX_SIZE_INDEX]);
-      int threadsNumber = Integer.parseInt(parameters[THREADS_NUMBER_INDEX]);
-      ReaderValidator.validateMatrixSizeAndThreadsNumber(matrixSize, threadsNumber);
+      int iterationsNumber = Integer.parseInt(parameters[ITERATIONS_NUMBER_INDEX]);
+      ReaderValidator.validateMatrixSizeAndThreadsNumber(matrixSize, iterationsNumber);
       int[][] matrix = new int[matrixSize][matrixSize];
       for (int i = 0; i < matrixSize; i++) {
         data = reader.readLine();
@@ -56,7 +56,7 @@ public class SquareMatrixReader {
           }
         }
       }
-      return new SquareMatrixReaderResult(threadsNumber, new SquareMatrix(matrix));
+      return new SquareMatrixReaderResult(matrixSize, iterationsNumber, new SquareMatrix(matrix));
     } catch (IOException | NullDataPassedReaderValidatorException | InvalidDataItemReaderException
         | InvalidDataItemsNumberException e) {
       throw new ReaderException(e);

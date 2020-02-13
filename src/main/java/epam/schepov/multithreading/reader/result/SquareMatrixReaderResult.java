@@ -5,11 +5,13 @@ import epam.schepov.multithreading.matrix.SquareMatrix;
 public class SquareMatrixReaderResult {
 
   private int threadsNumber;
+  private int iterationsNumber;
   private SquareMatrix matrix;
 
-  public SquareMatrixReaderResult(int threadsNumber, SquareMatrix matrix){
+  public SquareMatrixReaderResult(int threadsNumber, int iterationsNumber, SquareMatrix matrix){
     this.threadsNumber = threadsNumber;
     this.matrix = matrix;
+    this.iterationsNumber = iterationsNumber;
   }
 
   public int getThreadsNumber() {
@@ -28,4 +30,11 @@ public class SquareMatrixReaderResult {
     this.threadsNumber = threadsNumber;
   }
 
+  public int getIterationsNumber() {
+    return iterationsNumber;
+  }
+
+  public void setIterationsNumber(int iterationsNumber) {
+    this.iterationsNumber = iterationsNumber;
+  }
 }
