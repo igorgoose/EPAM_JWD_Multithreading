@@ -34,17 +34,21 @@ public class Main {
             for (int i = 0; i < overallThreadsNumber; i++) {
                 threadArray[i] = new Thread(new MatrixRunnable());
             }
-            for (int i = 0; i < iterationsNumber; i++) {
-                for (int j = 0; j < threadsNumberAtOnce; j++) {
-                    threadArray[i * threadsNumberAtOnce + j].start();
-                }
+            //for (int i = 0; i < iterationsNumber; i++) {
+            for (int j = 0; j < threadsNumberAtOnce; j++) {
+                threadArray[/*i * threadsNumberAtOnce + */j].start();
             }
-
+            for (int i = 0; i < threadsNumberAtOnce; i++) {
+                threadArray[i].join();
+            }
+            //}
         } catch (ReaderException e) {
             e.printStackTrace();
         } catch (NullSquareMatrixPassed e) {
             e.printStackTrace();
         } catch (AccessNotGrantedException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }

@@ -1,5 +1,7 @@
 package epam.schepov.multithreading.reader;
 
+import epam.schepov.multithreading.exception.matrix.InvalidSquareMatrixSize;
+import epam.schepov.multithreading.exception.matrix.NullMatrixException;
 import epam.schepov.multithreading.exception.reader.InvalidDataItemReaderException;
 import epam.schepov.multithreading.exception.reader.InvalidDataItemsNumberException;
 import epam.schepov.multithreading.exception.reader.NullDataPassedReaderValidatorException;
@@ -7,13 +9,18 @@ import epam.schepov.multithreading.exception.reader.NullFileNameReaderException;
 import epam.schepov.multithreading.exception.reader.ReaderException;
 import epam.schepov.multithreading.matrix.SquareMatrix;
 import epam.schepov.multithreading.reader.result.SquareMatrixReaderResult;
+import epam.schepov.multithreading.thread.MatrixRunnable;
 import epam.schepov.multithreading.validator.ReaderValidator;
+import org.apache.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
 public class SquareMatrixReader {
+
+  private static final Logger LOGGER = Logger.getLogger(SquareMatrixReader.class);
 
   private static final String DEFAULT_FILE_NAME = "matrix_data.txt";
   private static final String DELIMITER = " ";
@@ -35,9 +42,9 @@ public class SquareMatrixReader {
   }
 
   public SquareMatrixReaderResult read() throws ReaderException {
-    try(BufferedReader reader = new BufferedReader(new FileReader(file))){
+    try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
       String data = reader.readLine();
-      if(data == null){
+      if (data == null) {
         throw new ReaderException("File is missing data!");
       }
       String[] parameters = data.split(DELIMITER);
@@ -48,7 +55,7 @@ public class SquareMatrixReader {
       int[][] matrix = new int[matrixSize][matrixSize];
       for (int i = 0; i < matrixSize; i++) {
         data = reader.readLine();
-        if(data != null){
+        if (data != null) {
           parameters = data.split(DELIMITER);
           ReaderValidator.validateMatrixRowData(parameters, matrixSize);
           for (int j = 0; j < matrixSize; j++) {
@@ -58,9 +65,14 @@ public class SquareMatrixReader {
       }
       return new SquareMatrixReaderResult(matrixSize, iterationsNumber, new SquareMatrix(matrix));
     } catch (IOException | NullDataPassedReaderValidatorException | InvalidDataItemReaderException
-        | InvalidDataItemsNumberException e) {
+            | InvalidDataItemsNumberException e) {
       throw new ReaderException(e);
+    } catch (NullMatrixException e) {
+      e.printStackTrace();
+    } catch (InvalidSquareMatrixSize e) {
+      e.printStackTrace();
     }
+    throw new ReaderException();
   }
 
 }

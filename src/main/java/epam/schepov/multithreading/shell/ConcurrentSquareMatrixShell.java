@@ -21,6 +21,7 @@ public abstract class ConcurrentSquareMatrixShell {
         if (squareMatrix == null) {
             throw new NullSquareMatrixPassed("Null square matrix passed!");
         }
+        this.squareMatrix = squareMatrix;
     }
 
     public SquareMatrix getSquareMatrix() {
@@ -29,7 +30,7 @@ public abstract class ConcurrentSquareMatrixShell {
 
     public abstract boolean setItem(int row, int column, int value) throws OutOfBoundsMatrixException, OutOfBoundsMatrixShellException, AccessNotGrantedException;
 
-    public abstract int getItem(int row, int column) throws OutOfBoundsMatrixShellException, AccessNotGrantedException;
+    public abstract int getItem(int row, int column) throws OutOfBoundsMatrixShellException, AccessNotGrantedException, OutOfBoundsMatrixException;
 
     public abstract int getSquareMatrixSize();
 }

@@ -2,11 +2,15 @@ package epam.schepov.multithreading.writer;
 
 import epam.schepov.multithreading.exception.NullFilePassedWriterException;
 import epam.schepov.multithreading.exception.WriterCreationException;
+import epam.schepov.multithreading.thread.MatrixRunnable;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ConcurrentWriter {
+
+    private static final Logger LOGGER = Logger.getLogger(ConcurrentWriter.class);
 
     private ReentrantLock lock;
     private File outputFile;
