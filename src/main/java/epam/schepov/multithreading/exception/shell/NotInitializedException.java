@@ -1,4 +1,4 @@
-package epam.schepov.multithreading.exception;
+package epam.schepov.multithreading.exception.shell;
 
 public class NotInitializedException extends Exception {
     public NotInitializedException() {

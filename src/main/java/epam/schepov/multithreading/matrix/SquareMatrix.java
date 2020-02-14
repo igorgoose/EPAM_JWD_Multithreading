@@ -53,4 +53,17 @@ public class SquareMatrix {
     public int getColumnsNumber(){
         return matrix.length > 0 ? matrix[0].length : 0;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        int size = getMatrixSize();
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                stringBuilder.append(matrix[i][j]).append("\t");
+            }
+            stringBuilder.append("\n");
+        }
+        return stringBuilder.toString();
+    }
 }

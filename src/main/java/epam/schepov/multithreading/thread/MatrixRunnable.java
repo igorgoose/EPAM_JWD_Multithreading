@@ -1,13 +1,16 @@
 package epam.schepov.multithreading.thread;
 
-import epam.schepov.multithreading.exception.AccessNotGrantedException;
-import epam.schepov.multithreading.exception.NotInitializedException;
-import epam.schepov.multithreading.exception.WriterCreationException;
 import epam.schepov.multithreading.exception.matrix.OutOfBoundsMatrixException;
+import epam.schepov.multithreading.exception.thread.AccessNotGrantedException;
+import epam.schepov.multithreading.exception.thread.MatrixRunnableCreationException;
+import epam.schepov.multithreading.exception.thread.MatrixRunnableException;
+import epam.schepov.multithreading.exception.writer.ConcurrentWriterException;
+import epam.schepov.multithreading.exception.writer.CreationConcurrentWriterException;
 import epam.schepov.multithreading.shell.lock.LockBarrierSquareMatrixShell;
 import epam.schepov.multithreading.writer.ConcurrentWriter;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
@@ -16,19 +19,31 @@ public class MatrixRunnable implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(MatrixRunnable.class);
 
-    private ConcurrentWriter writer = ConcurrentWriter.getInstance();
-    private LockBarrierSquareMatrixShell matrixShell;
+    private ConcurrentWriter writer;
+    private LockBarrierSquareMatrixShell matrixShell = LockBarrierSquareMatrixShell.getInstance();
     private static int id_count = 0;
     private int id;
 
-    public MatrixRunnable() {
+    public MatrixRunnable() throws MatrixRunnableCreationException {
         id = ++id_count;
+        try {
+            writer = new ConcurrentWriter();
+        } catch (CreationConcurrentWriterException e) {
+            throw new MatrixRunnableCreationException(e);
+        }
+    }
+
+    public MatrixRunnable(ConcurrentWriter writer) throws MatrixRunnableCreationException {
+        if(writer == null){
+            throw new MatrixRunnableCreationException("Null writer passed!");
+        }
+        id = ++id_count;
+        this.writer = writer;
     }
 
     public void run() {
         LOGGER.debug(Thread.currentThread().getName() + ": Running");
         try {
-            matrixShell = LockBarrierSquareMatrixShell.getInstance();
             CyclicBarrier barrier = matrixShell.getCyclicBarrier();
             Random random = new Random();
 
@@ -57,14 +72,13 @@ public class MatrixRunnable implements Runnable {
             String info = "Thread: " + id + "; sum: " + sum + "\n";
             LOGGER.debug(Thread.currentThread().getName() + ": writing");
             writer.write(info);
-
+            LOGGER.debug(Thread.currentThread().getName() + ": closing thread");
         } catch (InterruptedException | OutOfBoundsMatrixException | AccessNotGrantedException
-                | NotInitializedException | BrokenBarrierException e) {
+                | BrokenBarrierException e) {
             LOGGER.warn(Thread.currentThread().getName(), e);
             e.printStackTrace();
-        } catch (WriterCreationException e) {
-            LOGGER.error(Thread.currentThread().getName(), e);
-            e.printStackTrace();
+        } catch (ConcurrentWriterException e) {
+            LOGGER.warn(Thread.currentThread().getName() + "couldn't write", e);
         }
     }
 
@@ -86,15 +100,14 @@ public class MatrixRunnable implements Runnable {
         return new Random().nextBoolean();
     }
 
-    private int countSums(int diagonalIndex) throws NotInitializedException, AccessNotGrantedException, OutOfBoundsMatrixException {
-        if (matrixShell == null) {
-            throw new NotInitializedException();
-        }
+    private int countSums(int diagonalIndex) throws AccessNotGrantedException, OutOfBoundsMatrixException {
         int size = matrixShell.getSquareMatrixSize();
         int count = matrixShell.getItem(diagonalIndex, diagonalIndex);
-        for (int i = 0; i < size && i != diagonalIndex; i++) {
-            count += matrixShell.getItem(diagonalIndex, i);
-            count += matrixShell.getItem(i, diagonalIndex);
+        for (int i = 0; i < size; i++) {
+            if(i != diagonalIndex) {
+                count += matrixShell.getItem(diagonalIndex, i);
+                count += matrixShell.getItem(i, diagonalIndex);
+            }
         }
         return count;
     }

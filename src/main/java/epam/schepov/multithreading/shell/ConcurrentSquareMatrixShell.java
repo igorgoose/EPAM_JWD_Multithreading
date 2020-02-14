@@ -1,7 +1,7 @@
 package epam.schepov.multithreading.shell;
 
-import epam.schepov.multithreading.exception.AccessNotGrantedException;
-import epam.schepov.multithreading.exception.NullSquareMatrixPassed;
+import epam.schepov.multithreading.exception.thread.AccessNotGrantedException;
+import epam.schepov.multithreading.exception.shell.NullSquareMatrixPassed;
 import epam.schepov.multithreading.exception.shell.OutOfBoundsMatrixShellException;
 import epam.schepov.multithreading.exception.matrix.OutOfBoundsMatrixException;
 import epam.schepov.multithreading.matrix.SquareMatrix;

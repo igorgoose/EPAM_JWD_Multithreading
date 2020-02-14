@@ -1,4 +1,4 @@
-package epam.schepov.multithreading.exception;
+package epam.schepov.multithreading.exception.writer;
 
 public class NullFilePassedWriterException extends Exception {
     public NullFilePassedWriterException() {

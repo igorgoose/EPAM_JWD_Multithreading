@@ -1,4 +1,4 @@
-package epam.schepov.multithreading.exception;
+package epam.schepov.multithreading.exception.thread;
 
 public class MatrixRunnableException extends Exception {
     public MatrixRunnableException() {

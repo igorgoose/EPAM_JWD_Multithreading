@@ -1,7 +1,7 @@
 package epam.schepov.multithreading.shell.lock;
 
-import epam.schepov.multithreading.exception.AccessNotGrantedException;
-import epam.schepov.multithreading.exception.NullSquareMatrixPassed;
+import epam.schepov.multithreading.exception.thread.AccessNotGrantedException;
+import epam.schepov.multithreading.exception.shell.NullSquareMatrixPassed;
 import epam.schepov.multithreading.exception.matrix.OutOfBoundsMatrixException;
 import epam.schepov.multithreading.matrix.SquareMatrix;
 import epam.schepov.multithreading.shell.ConcurrentSquareMatrixShell;
@@ -21,7 +21,6 @@ public class LockBarrierSquareMatrixShell extends ConcurrentSquareMatrixShell {
     private boolean[][] usedCells;
     private boolean isReplacingMatrix = false;
     private CyclicBarrier cyclicBarrier;
-    private static final int DEFAULT_SLEEP_TIME = 10;
 
     private LockBarrierSquareMatrixShell() {
         int size = squareMatrix.getMatrixSize();
@@ -37,6 +36,7 @@ public class LockBarrierSquareMatrixShell extends ConcurrentSquareMatrixShell {
     }
 
     private void initializeArrays() {
+        LOGGER.debug(Thread.currentThread().getName() + ": Initializing arrays");
         int size = lockMatrix.length;
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -54,21 +54,27 @@ public class LockBarrierSquareMatrixShell extends ConcurrentSquareMatrixShell {
     public boolean setItem(int row, int column, int value) throws AccessNotGrantedException, OutOfBoundsMatrixException {
         validateRowAndColumn(row, column, getSquareMatrixSize());
         ReentrantLock currentLock = lockMatrix[row][column];
-        boolean matrixWasLocked = true;
+        boolean threadIsLockingMatrix = true;
         try {
             currentLock.lock();
-            lockMatrixIfNotLocked();
-            matrixWasLocked = false;
+            if (!(threadIsLockingMatrix = matrixLock.tryLock())) {
+                if (isReplacingMatrix) {
+                    throw new AccessNotGrantedException("Unable to get item while replacing matrix!");
+                }
+            }
             if (!usedCells[row][column]) {
                 squareMatrix.setItem(row, column, value);
+                usedCells[row][column] = true;
+                LOGGER.debug(Thread.currentThread().getName() + ": Item is set: (" + row + ", " + column + ") " + value);
                 return true;
             }
         } finally {
             currentLock.unlock();
-            if(!matrixWasLocked){
+            if (threadIsLockingMatrix) {
                 matrixLock.unlock();
             }
         }
+        LOGGER.debug(Thread.currentThread().getName() + ": Item is NOT set: (" + row + ", " + column + ") " + value);
         return false;
     }
 
@@ -76,15 +82,18 @@ public class LockBarrierSquareMatrixShell extends ConcurrentSquareMatrixShell {
     public int getItem(int row, int column) throws AccessNotGrantedException, OutOfBoundsMatrixException {
         validateRowAndColumn(row, column, getSquareMatrixSize());
         ReentrantLock currentLock = lockMatrix[row][column];
-        boolean matrixWasLocked = true;
+        boolean threadIsLockingMatrix = true;
         try {
             currentLock.lock();
-            lockMatrixIfNotLocked();
-            matrixWasLocked = false;
+            if (!(threadIsLockingMatrix = matrixLock.tryLock())) {
+                if (isReplacingMatrix) {
+                    throw new AccessNotGrantedException("Unable to get item while replacing matrix!");
+                }
+            }
             return squareMatrix.getItem(row, column);
         } finally {
             currentLock.unlock();
-            if(!matrixWasLocked){
+            if (threadIsLockingMatrix) {
                 matrixLock.unlock();
             }
         }
@@ -110,15 +119,20 @@ public class LockBarrierSquareMatrixShell extends ConcurrentSquareMatrixShell {
             usedCells = new boolean[size][size];
             cyclicBarrier = new CyclicBarrier(size);
             initializeArrays();
+            LOGGER.debug(Thread.currentThread().getName() + ": setting new matrix");
         } finally {
             isReplacingMatrix = false;
             matrixLock.unlock();
         }
     }
 
-    private void lockMatrixIfNotLocked() throws AccessNotGrantedException {
-        if (!matrixLock.tryLock() && isReplacingMatrix) {
-            throw new AccessNotGrantedException("Unable to get item while replacing matrix!");
+    public void reset(){
+        try{
+            matrixLock.lock();
+            initializeArrays();
+            LOGGER.debug(Thread.currentThread().getName() + ": resetting arrays");
+        } finally {
+            matrixLock.unlock();
         }
     }
 
