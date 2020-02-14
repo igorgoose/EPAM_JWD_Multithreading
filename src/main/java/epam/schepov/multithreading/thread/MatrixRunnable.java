@@ -3,14 +3,12 @@ package epam.schepov.multithreading.thread;
 import epam.schepov.multithreading.exception.matrix.OutOfBoundsMatrixException;
 import epam.schepov.multithreading.exception.thread.AccessNotGrantedException;
 import epam.schepov.multithreading.exception.thread.MatrixRunnableCreationException;
-import epam.schepov.multithreading.exception.thread.MatrixRunnableException;
 import epam.schepov.multithreading.exception.writer.ConcurrentWriterException;
 import epam.schepov.multithreading.exception.writer.CreationConcurrentWriterException;
 import epam.schepov.multithreading.shell.lock.LockBarrierSquareMatrixShell;
 import epam.schepov.multithreading.writer.ConcurrentWriter;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
@@ -76,7 +74,6 @@ public class MatrixRunnable implements Runnable {
         } catch (InterruptedException | OutOfBoundsMatrixException | AccessNotGrantedException
                 | BrokenBarrierException e) {
             LOGGER.warn(Thread.currentThread().getName(), e);
-            e.printStackTrace();
         } catch (ConcurrentWriterException e) {
             LOGGER.warn(Thread.currentThread().getName() + "couldn't write", e);
         }

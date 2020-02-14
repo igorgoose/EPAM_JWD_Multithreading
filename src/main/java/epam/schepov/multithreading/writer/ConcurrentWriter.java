@@ -61,13 +61,13 @@ public class ConcurrentWriter implements AutoCloseable{
     }
 
     @Override
-    public void close(){
+    public void close() throws ConcurrentWriterException {
         try {
             writer.close();
             LOGGER.debug(Thread.currentThread().getName() + ": closing");
         } catch (IOException e) {
             LOGGER.warn(Thread.currentThread().getName() + ": error while closing");
-            e.printStackTrace();
+            throw new ConcurrentWriterException(e);
         }
     }
 }

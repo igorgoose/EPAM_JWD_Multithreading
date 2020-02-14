@@ -62,6 +62,8 @@ public class Main {
             LOGGER.error("Error while creating writer: ", e);
         } catch (MatrixRunnableCreationException e) {
             LOGGER.error("Error while creating thread: ", e);
+        } catch (ConcurrentWriterException e) {
+            LOGGER.warn("Error while closing writer: ", e);
         }
     }
 }

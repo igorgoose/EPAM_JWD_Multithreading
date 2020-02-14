@@ -47,11 +47,14 @@ public class SquareMatrixReader {
       if (data == null) {
         throw new ReaderException("File is missing data!");
       }
+
       String[] parameters = data.split(DELIMITER);
       ReaderValidator.validateThreadMatrixMetaData(parameters);
+
       int matrixSize = Integer.parseInt(parameters[MATRIX_SIZE_INDEX]);
       int iterationsNumber = Integer.parseInt(parameters[ITERATIONS_NUMBER_INDEX]);
       ReaderValidator.validateMatrixSizeAndThreadsNumber(matrixSize, iterationsNumber);
+
       int[][] matrix = new int[matrixSize][matrixSize];
       for (int i = 0; i < matrixSize; i++) {
         data = reader.readLine();
@@ -63,16 +66,16 @@ public class SquareMatrixReader {
           }
         }
       }
+
       return new SquareMatrixReaderResult(matrixSize, iterationsNumber, new SquareMatrix(matrix));
-    } catch (IOException | NullDataPassedReaderValidatorException | InvalidDataItemReaderException
-            | InvalidDataItemsNumberException e) {
+    } catch (IOException e) {
+      LOGGER.error("Reading error", e);
       throw new ReaderException(e);
-    } catch (NullMatrixException e) {
-      e.printStackTrace();
-    } catch (InvalidSquareMatrixSize e) {
-      e.printStackTrace();
+    } catch (NullDataPassedReaderValidatorException | InvalidDataItemReaderException |
+            InvalidDataItemsNumberException | NullMatrixException | InvalidSquareMatrixSize e) {
+      LOGGER.warn("Reading error", e);
+      throw new ReaderException(e);
     }
-    throw new ReaderException();
   }
 
 }

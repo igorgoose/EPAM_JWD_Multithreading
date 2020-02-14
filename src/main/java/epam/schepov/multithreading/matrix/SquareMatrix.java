@@ -46,14 +46,6 @@ public class SquareMatrix {
         matrix[row][column] = value;
     }
 
-    public int getRowsNumber(){
-        return matrix.length;
-    }
-
-    public int getColumnsNumber(){
-        return matrix.length > 0 ? matrix[0].length : 0;
-    }
-
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
